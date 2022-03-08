@@ -108,7 +108,7 @@ def pwchange(request):
 
         #비밀번호 일치 여부 확인, 일치시 닉네임 변경
         if request.POST['pw'] == user.pw:
-            user.pw = request.POST['pw']
+            user.pw = request.POST['new_pw']
             user.save()
             return HttpResponse("True")
         else:
@@ -116,4 +116,3 @@ def pwchange(request):
 
 
     return HttpResponse("NOT POST")
-    
