@@ -55,3 +55,22 @@ def signup(request):
         return HttpResponse("password mismatch")
 
     return HttpResponse("NOT POST")
+
+
+@csrf_exempt
+def login(request):
+    if request.method == "POST":
+        
+        try:
+            user = users.objects.get(email = request.POST['email'])
+        except:
+            return HttpResponse("이메일 존재X")
+
+
+        if request.POST['pw'] == user.pw:
+            return HttpResponse("True")
+        else:
+            return HttpResponse("False")
+
+
+    return HttpResponse("NOT POST")
