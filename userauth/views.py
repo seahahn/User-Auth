@@ -95,3 +95,24 @@ def nicknamechange(request):
 
 
     return HttpResponse("NOT POST")
+
+
+@csrf_exempt
+def pwchange(request):
+    if request.method == "POST":
+        #해당 유저를 데이터베이스에서 조회
+        try:
+            user = users.objects.get(email = request.POST['email'])
+        except:
+            return HttpResponse("이메일 존재X")
+
+        #비밀번호 일치 여부 확인, 일치시 닉네임 변경
+        if request.POST['pw'] == user.pw:
+            user.pw = request.POST['pw']
+            user.save()
+            return HttpResponse("True")
+        else:
+            return HttpResponse("False")
+
+
+    return HttpResponse("NOT POST")
