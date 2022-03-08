@@ -60,13 +60,13 @@ def signup(request):
 @csrf_exempt
 def login(request):
     if request.method == "POST":
-
+        #해당 유저를 데이터베이스에서 조회
         try:
             user = users.objects.get(email = request.POST['email'])
         except:
             return HttpResponse("이메일 존재X")
 
-
+        #비밀번호 일치 여부 확인
         if request.POST['pw'] == user.pw:
             return HttpResponse("True")
         else:
@@ -79,13 +79,13 @@ def login(request):
 @csrf_exempt
 def nicknamechange(request):
     if request.method == "POST":
-
+        #해당 유저를 데이터베이스에서 조회
         try:
             user = users.objects.get(email = request.POST['email'])
         except:
             return HttpResponse("이메일 존재X")
 
-
+        #비밀번호 일치 여부 확인, 일치시 닉네임 변경
         if request.POST['pw'] == user.pw:
             user.nickname = request.POST['nickname']
             user.save()
