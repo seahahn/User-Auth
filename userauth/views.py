@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.http import HttpResponse
-from .models import users, func_log, ml_project, ml_model
+from .models import inactive_users, users, func_log, ml_project, ml_model
 from django.views.decorators.csrf import csrf_exempt
 from django.middleware.csrf import get_token
 
@@ -114,5 +114,29 @@ def pwchange(request):
         else:
             return HttpResponse("False")
 
+
+    return HttpResponse("NOT POST")
+
+
+@csrf_exempt
+def inactive(request):
+    if request.method == "POST":
+        #해당 유저를 데이터베이스에서 조회
+        try:
+            user = users.objects.get(email = request.POST['email'])
+        except:
+            return HttpResponse("이메일 존재X")
+        #해당 유저를 비활성화 데이터베이스에 추가
+        inactive_users(
+                idx = user.idx,
+                email = user.email,
+                pw = user.pw,
+                nickname = user.nickname,
+                membership = user.membership,
+                user_state = int(request.POST["user_state"])).save()
+        #해당 유저정보를 유저 테이블에서 제거
+        user.delete()
+
+        return HttpResponse("success")
 
     return HttpResponse("NOT POST")
