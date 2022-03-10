@@ -25,7 +25,7 @@ secret_file = os.path.join(BASE_DIR, 'secrets.json')
 with open(secret_file) as f:
     secrets = json.loads(f.read())
 
-SECRET_KEY = secrets
+SECRET_KEY = secrets["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -110,15 +110,15 @@ WSGI_APPLICATION = 'base.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
+print(secrets["SECRET_KEY"])
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'xlpiixgw',
-        'USER' : 'xlpiixgw',
-        'PASSWORD' : 'hN3nkVL64tO-iCC45dD3UzEDOkGKXzhz',
-        'HOST' : 'john.db.elephantsql.com',
-        'PORT' : '5432',
+        'NAME': secrets['DB_NAME'],
+        'USER' : secrets['DB_USERNAME'],
+        'PASSWORD' : secrets['DB_PASSWORD'],
+        'HOST' : secrets['DB_HOST'],
+        'PORT' : secrets['DB_PORT'],
     }
 }
 
