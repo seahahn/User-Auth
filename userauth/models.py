@@ -8,7 +8,7 @@ class users(models.Model):
     email = models.CharField(max_length=255)
     pw = models.CharField(max_length=255)
     nickname = models.CharField(max_length=255)
-    membership = models.IntegerField()
+    membership = models.IntegerField(default= 0)
     last_update = models.DateTimeField('last access', auto_now_add=True)
     created_at = models.DateTimeField('sign up', auto_now_add=True)
     class Meta:

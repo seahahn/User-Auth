@@ -3,9 +3,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.http import HttpResponse
-from .models import inactive_users, users, func_log, ml_project, ml_model
+from .models import inactive_users, users, func_log, ml_project, ml_model, mail_confirm
 from django.views.decorators.csrf import csrf_exempt
 from django.middleware.csrf import get_token
+from django.core.mail import EmailMessage
+import string
+import random
 
 # Create your views here.
 
@@ -15,6 +18,7 @@ def index(request):
     return HttpResponse("True")
 
 
+@csrf_exempt
 def nickname_check(request):
     result = None
     try:
@@ -28,23 +32,38 @@ def nickname_check(request):
     return False
 
 
+@csrf_exempt
 def email_check(request):
     try:
         #해당 이메일을 가진 유저가 존재하는지 확인
         #에러가 발생하면 해당 이메일을 가진 유저가 없는 것으로 판단
         result = users.objects.get(email = request.GET['email'])
     except:
-        #이메일 난수 전송
-        return True
+        new_pw = ""
+        for i in range(6):
+            new_pw += random.choice(string.digits)
+        mail_confirm(
+                email = request.POST["email"],
+                cert_number = new_pw).save()
+        email = EmailMessage(
+            '회원 가입 인증번호',                # 제목
+            new_pw,       # 내용
+            to=[request.GET['email']],  # 받는 이메일 리스트
+        )
+        email.send()
+        return HttpResponse("True")
     #해당되는 이메일이 존재하여 해당 이메일로 신규가입 불가능
-    return False
+    return HttpResponse("False")
+
 
 @csrf_exempt
 def signup(request):
     if request.method == "POST":
+        # TODO 프론트에서 비밀번호 일치 여부 확인 기능 추가하면 제외 예정
         #비밀번호와 비밀번호 확인 값의 일치를 확인, 불일치시 메시지 반환
         if request.POST['pw'] == request.POST['pw_confirm']:
             #입력으로 들어온 유저 정보를 이용해 데이터베이스 유저 테이블에 정보를 삽입, 성공메시지 반환
+            # TODO DB 상에서 membership default 0으로 지정하기
             users(
                 email = request.POST["email"],
                 pw = request.POST["pw"],
@@ -64,6 +83,7 @@ def login(request):
         try:
             user = users.objects.get(email = request.POST['email'])
         except:
+            # TODO 에러 메시지 사용자 친화적으로 변경하기
             return HttpResponse("이메일 존재X")
 
         #비밀번호 일치 여부 확인
@@ -86,12 +106,9 @@ def nicknamechange(request):
             return HttpResponse("이메일 존재X")
 
         #비밀번호 일치 여부 확인, 일치시 닉네임 변경
-        if request.POST['pw'] == user.pw:
-            user.nickname = request.POST['nickname']
-            user.save()
-            return HttpResponse("True")
-        else:
-            return HttpResponse("False")
+        user.nickname = request.POST['nickname']
+        user.save()
+        return HttpResponse("True")
 
 
     return HttpResponse("NOT POST")
