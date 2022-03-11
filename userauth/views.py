@@ -43,7 +43,7 @@ def email_check(request):
         for i in range(6):
             new_pw += random.choice(string.digits)
         mail_confirm(
-                email = request.POST["email"],
+                email = request.GET["email"],
                 cert_number = new_pw).save()
         email = EmailMessage(
             '회원 가입 인증번호',                # 제목
