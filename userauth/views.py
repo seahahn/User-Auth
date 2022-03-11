@@ -173,7 +173,10 @@ def profile_pic_change(request):
         #프로필 사진 URL변경
         user.profile_pic = request.POST['profile_pic']
         user.save()
-        return HttpResponse("True")
+        return {
+            "result" : "True",
+            "content" : user.profile_pic
+            }
 
     return HttpResponse("NOT POST")
 
