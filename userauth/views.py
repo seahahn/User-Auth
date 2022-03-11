@@ -46,7 +46,7 @@ def email_check(request):
                 email = request.GET["email"],
                 cert_number = certification_number).save()
         email = EmailMessage(
-            '회원 가입 인증번호',                # 제목
+            '회원 가입 인증번호',        # 제목
             certification_number,       # 내용
             to=[request.GET['email']],  # 받는 이메일 리스트
         )
@@ -106,6 +106,7 @@ def search_pw(request):
         #해당 이메일에 대한 정보가 존재하지 않음
         return HttpResponse("False")
 
+    #새로운 임시 비밀번호 생성
     new_pw = ""
     string_pool = string.digits + string.ascii_lowercase
     for i in range(8):
@@ -113,8 +114,8 @@ def search_pw(request):
     result.pw = new_pw
     result.save()
     email = EmailMessage(
-        '임시 비밀번호',                # 제목
-        new_pw,       # 내용
+        '임시 비밀번호',             # 제목
+        new_pw,                     # 내용
         to=[request.GET['email']],  # 받는 이메일 리스트
     )
     email.send()
@@ -156,6 +157,23 @@ def pwchange(request):
         else:
             return HttpResponse("False")
 
+
+    return HttpResponse("NOT POST")
+
+
+@csrf_exempt
+def profile_pic_change(request):
+    if request.method == "POST":
+        #해당 유저를 데이터베이스에서 조회
+        try:
+            user = users.objects.get(email = request.POST['email'])
+        except:
+            return HttpResponse("False")
+
+        #프로필 사진 URL변경
+        user.profile_pic = request.POST['profile_pic']
+        user.save()
+        return HttpResponse("True")
 
     return HttpResponse("NOT POST")
 
