@@ -37,18 +37,18 @@ def email_check(request):
     try:
         #해당 이메일을 가진 유저가 존재하는지 확인
         #에러가 발생하면 해당 이메일을 가진 유저가 없는 것으로 판단
-        result = users.objects.get(email = request.GET['email'])
+        result = users.objects.get(email = request.POST['email'])
     except:
         certification_number = ""
         for i in range(6):
             certification_number += random.choice(string.digits)
         mail_confirm(
-                email = request.GET["email"],
+                email = request.POST["email"],
                 cert_number = certification_number).save()
         email = EmailMessage(
             '회원 가입 인증번호',        # 제목
             certification_number,       # 내용
-            to=[request.GET['email']],  # 받는 이메일 리스트
+            to=[request.POST['email']],  # 받는 이메일 리스트
         )
         email.send()
         return HttpResponse("True")
@@ -101,7 +101,7 @@ def search_pw(request):
     try:
         #해당 이메일을 가진 유저가 존재하는지 확인
         #에러가 발생하면 해당 이메일을 가진 유저가 없는 것으로 판단
-        result = users.objects.get(email = request.GET['email'])
+        result = users.objects.get(email = request.POST['email'])
     except:
         #해당 이메일에 대한 정보가 존재하지 않음
         return HttpResponse("False")
@@ -116,7 +116,7 @@ def search_pw(request):
     email = EmailMessage(
         '임시 비밀번호',             # 제목
         new_pw,                     # 내용
-        to=[request.GET['email']],  # 받는 이메일 리스트
+        to=[request.POST['email']],  # 받는 이메일 리스트
     )
     email.send()
     return HttpResponse("True")

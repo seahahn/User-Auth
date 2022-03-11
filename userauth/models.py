@@ -41,7 +41,7 @@ class ml_model(models.Model):
     idx = models.AutoField(primary_key=True, db_column="idx")
     user_idx = models.ForeignKey(users, db_column="user_idx", on_delete=models.DO_NOTHING)
     model_name = models.CharField(max_length=255)
-    model_url = profile_pic = models.CharField(max_length=255, default="")
+    model_url = models.CharField(max_length=255, default="")
     last_update = models.DateTimeField('last update', auto_now_add=True)
     created_time = models.DateTimeField('create time', auto_now_add=True)
     class Meta:
