@@ -13,4 +13,5 @@ urlpatterns = [
     path('pw_change/', views.pwchange, name='pwchange'),
     path('profile_pic_change/', views.profile_pic_change, name='profile_pic_change'),
     path('inactive/', views.inactive, name='inactive'),
+    path('post_image/', views.post_image, name='post_image'),
  ]
