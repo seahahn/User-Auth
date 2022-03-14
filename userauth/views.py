@@ -242,64 +242,6 @@ def pwchange(request):
 
 def profile_pic_change(request):
 
-    if request.method == "POST":
-
-        #해당 유저를 데이터베이스에서 조회
-        try:
-            user = users.objects.get(email = request.POST['email'])
-
-        except:
-            return HttpResponse("False")
-
-
-        #프로필 사진 URL변경
-        user.profile_pic = request.POST['profile_pic']
-        user.save()
-
-        return {
-            "result" : "True",
-            "content" : user.profile_pic
-            }
-
-    return HttpResponse("NOT POST")
-
-
-
-
-
-
-def inactive(request):
-
-    if request.method == "POST":
-        #해당 유저를 데이터베이스에서 조회
-        try:
-            user = users.objects.get(email = request.POST['email'])
-
-        except:
-            return HttpResponse("이메일 존재X")
-
-        #해당 유저를 비활성화 데이터베이스에 추가
-        inactive_users(
-                idx = user.idx,
-                email = user.email,
-                pw = user.pw,
-                nickname = user.nickname,
-                membership = user.membership,
-                user_state = int(request.POST["user_state"])).save()
-
-        #해당 유저정보를 유저 테이블에서 제거
-        user.delete()
-
-        return HttpResponse("success")
-
-    return HttpResponse("NOT POST")
-
-
-
-
-
-def post_image(request):
-
     if request.method == 'POST':
 
         if len(request.FILES) != 0:
@@ -334,3 +276,34 @@ def post_image(request):
 
         else:
             return  HttpResponse('file_none')
+
+
+
+
+
+
+def inactive(request):
+
+    if request.method == "POST":
+        #해당 유저를 데이터베이스에서 조회
+        try:
+            user = users.objects.get(email = request.POST['email'])
+
+        except:
+            return HttpResponse("이메일 존재X")
+
+        #해당 유저를 비활성화 데이터베이스에 추가
+        inactive_users(
+                idx = user.idx,
+                email = user.email,
+                pw = user.pw,
+                nickname = user.nickname,
+                membership = user.membership,
+                user_state = int(request.POST["user_state"])).save()
+
+        #해당 유저정보를 유저 테이블에서 제거
+        user.delete()
+
+        return HttpResponse("success")
+
+    return HttpResponse("NOT POST")
