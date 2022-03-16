@@ -30,41 +30,11 @@ SECRET_KEY = secrets["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
 
 APPEND_SLASH=False
 
-# CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ALLOW_CREDENTIALS = True
-# CSRF_TRUSTED_ORIGINS = (
-#     'localhost:8000',
-#     '127.0.0.1:8000'
-# )
-# CORS_ORIGIN_WHITELIST = (
-#     'localhost:8000',
-#     '127.0.0.1:8000'
-# )
-# CORS_ALLOW_HEADERS = (
-#     'access-control-allow-credentials',
-#     'access-control-allow-origin',
-#     'access-control-request-method',
-#     'access-control-request-headers',
-#     'accept',
-#     'accept-encoding',
-#     'accept-language',
-#     'authorization',
-#     'connection',
-#     'content-type',
-#     'dnt',
-#     'credentials',
-#     'host',
-#     'origin',
-#     'user-agent',
-#     'X-CSRFToken',
-#     'csrftoken',
-#     'x-requested-with',
 
-# )
 # Application definition
 
 INSTALLED_APPS = [
@@ -75,10 +45,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'storages'
+    'corsheaders',
+    'storages',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -184,3 +156,31 @@ AWS_S3_ACCESS_KEY_ID = secrets['AWS_S3_ACCESS_KEY_ID']
 AWS_S3_SECRET_ACCESS_KEY = secrets['AWS_S3_SECRET_ACCESS_KEY']
 AWS_STORAGE_BUCKET_NAME = secrets['AWS_STORAGE_BUCKET_NAME']
 
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+	# 허용할 Origin 추가 (프론트앤드)
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
+]
+# CSRF_TRUSTED_ORIGINS = ["*"]
+CORS_ALLOW_HEADERS = (
+    'access-control-allow-credentials',
+    'access-control-allow-origin',
+    'access-control-request-method',
+    'access-control-request-headers',
+    'accept',
+    'accept-encoding',
+    'accept-language',
+    'authorization',
+    'connection',
+    'content-type',
+    'dnt',
+    'credentials',
+    'host',
+    'origin',
+    'user-agent',
+    'X-CSRFToken',
+    'csrftoken',
+    'x-requested-with',
+    'User-Id'
+)
