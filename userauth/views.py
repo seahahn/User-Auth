@@ -183,41 +183,38 @@ def pwchange(data):
 
 
 def profile_pic_change(request):
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id = settings.AWS_S3_ACCESS_KEY_ID,
+        aws_secret_access_key = settings.AWS_S3_SECRET_ACCESS_KEY,
+    )
+    if len(request.FILES) != 0:
 
-    if request.method == 'POST':
+        file = request.FILES['profile_pic']
+        pic_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.ap-northeast-2.amazonaws.com/profile_pic/{request.POST['user_idx']}/{request.POST['user_idx']}.png"
 
-        if len(request.FILES) != 0:
+        s3_client.upload_fileobj(
+            file,
+            settings.AWS_STORAGE_BUCKET_NAME,
+            f"profile_pic/{request.POST['user_idx']}/{request.POST['user_idx']}.png",
+            ExtraArgs={
+                "ContentType": file.content_type,
+            }
+        )
 
-            s3_client = boto3.client(
-                's3',
-                aws_access_key_id = settings.AWS_S3_ACCESS_KEY_ID,
-                aws_secret_access_key = settings.AWS_S3_SECRET_ACCESS_KEY,
-            )
+        user = users.objects.get(idx = request.POST['user_idx'])
+        user.profile_pic = pic_url
+        user.save()
 
+        return JsonResponse({"result":True, "profile_pic":pic_url})
+    else:
+        s3_client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=f"profile_pic/{request.POST['user_idx']}/{request.POST['user_idx']}.png")
 
-            file = request.FILES['profile_pic']
-            pic_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.ap-northeast-2.amazonaws.com/profile_pic/{request.POST['user_idx']}/{request.POST['user_idx']}.png"
+        user = users.objects.get(idx = request.POST['user_idx'])
+        user.profile_pic = ''
+        user.save()
 
-
-            s3_client.upload_fileobj(
-                file,
-                settings.AWS_STORAGE_BUCKET_NAME,
-                f"profile_pic/{request.POST['user_idx']}/{request.POST['user_idx']}.png",
-                ExtraArgs={
-                    "ContentType": file.content_type,
-                }
-            )
-
-            if request.POST["is_pic_empty"] == "True":
-                user = users.objects.get(idx = request.POST['user_idx'])
-                user.profile_pic = pic_url
-                user.save()
-
-            return HttpResponse("success")
-
-
-        else:
-            return  HttpResponse('file_none')
+        return JsonResponse({"result":True, "profile_pic":None})
 
 
 @requestBodyToJson
