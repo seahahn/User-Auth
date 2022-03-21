@@ -10,12 +10,15 @@ cffi==1.14.3
 click==8.0.3
 colorama==0.4.4
 cryptography==3.1.1
+dj-database-url==0.5.0
 Django==3.2.5
 django-cors-headers==3.11.0
 django-storages==1.12.3
 dpcpp-cpp-rt==2022.0.2
+django-heroku==0.3.1
 fastapi==0.73.0
 fsspec==2022.1.0
+gunicorn==20.1.0
 h11==0.13.0
 httptools==0.3.0
 idna==3.3
@@ -61,3 +64,4 @@ watchgod==0.7
 websockets==10.1
 win-inet-pton==1.1.0
 wincertstore==0.2
+whitenoise==6.0.0
