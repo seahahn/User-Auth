@@ -18,10 +18,6 @@ gunicorn==20.1.0
 h11==0.13.0
 httptools==0.3.0
 idna==3.3
-intel-cmplr-lib-rt==2022.0.2
-intel-cmplr-lic-rt==2022.0.2
-intel-opencl-rt==2022.0.2
-intel-openmp==2022.0.2
 Jinja2==3.0.3
 jmespath==0.10.0
 MarkupSafe==2.1.0
