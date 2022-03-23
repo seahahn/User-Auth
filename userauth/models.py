@@ -19,7 +19,7 @@ class users(models.Model):
 class func_log(models.Model):
     user_idx = models.ForeignKey(users, db_column="user_idx", on_delete=models.DO_NOTHING)
     func_code = models.CharField(max_length=255)
-    is_worked = models.BooleanField()
+    is_worked = models.IntegerField(default= 0)
     error_msg = models.TextField(default="")
     start_time = models.DateTimeField('start time')
     end_time = models.DateTimeField('end time')
