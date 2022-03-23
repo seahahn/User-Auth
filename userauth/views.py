@@ -103,19 +103,17 @@ def login(data):
     try:
         user = users.objects.get(email = data['email'])
     except Exception as e:
-        print(e)
         # 가입하지 않은 이메일인 경우
         return JsonResponse({"result":False, "email_state":False})
 
     #비밀번호 일치 여부 확인
-    print(data['pw'].encode('utf-8'))
-    print(user.pw)
     if bcrypt.checkpw(data['pw'].encode('utf-8'), user.pw.encode('utf-8')):
         user_data = {
             "idx":user.idx,
             "email":user.email,
             "nickname":user.nickname,
             "profile_pic":user.profile_pic,
+            "membership":user.membership,
         }
         return JsonResponse({"result":True, "email_state":True, "user_data":user_data})
     else:
@@ -223,7 +221,6 @@ def inactive(data):
     try:
         user = users.objects.get(idx = data['idx'])
     except Exception as e:
-        print(e)
         return JsonResponse({"result":False, "user_state":False})
 
     if bcrypt.checkpw(data['pw'].encode('utf-8'), user.pw.encode('utf-8')):
