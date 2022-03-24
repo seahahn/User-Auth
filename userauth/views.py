@@ -7,6 +7,7 @@ from datetime import datetime, timezone, timedelta
 import bcrypt, string, random, boto3, json, jwt
 
 SECRET_KEY = settings.SECRET_KEY
+JWT_ISS = settings.JWT_ISS
 
 # JSON으로 들어오는 데이터를 파싱하기 위한 데코레이터
 def requestBodyToJson(original):
@@ -23,7 +24,7 @@ def verify_token(original):
             # 토큰을 검증하여 유효한 토큰인지 확인
             rt = request.COOKIES.get("refresh_token")
             at = request.COOKIES.get("access_token")
-            jwt.decode(rt, SECRET_KEY, algorithms="HS256") # refresh_token이 유효하지 않으면 에러 발생
+            jwt.decode(rt, SECRET_KEY, issuer=JWT_ISS, algorithms="HS256") # refresh_token이 유효하지 않으면 에러 발생
             jwt.decode(at, SECRET_KEY, algorithms="HS256")
             return original(request)
         except Exception as e:
@@ -60,7 +61,7 @@ def refresh_jwt(request):
     rt = request.COOKIES.get("refresh_token")
     at = request.COOKIES.get("access_token")
     try:
-        jwt.decode(rt, SECRET_KEY, algorithms="HS256") # refresh_token이 유효하지 않으면 에러 발생
+        jwt.decode(rt, SECRET_KEY, issuer=JWT_ISS, algorithms="HS256") # refresh_token이 유효하지 않으면 에러 발생
         jwt.decode(at, SECRET_KEY, algorithms="HS256")
     except Exception as e:
         return JsonResponse({"result":False, "token_state":False, "message":"비정상적 갱신 요청"})
