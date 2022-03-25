@@ -13,5 +13,8 @@ urlpatterns = [
     path('nickname_change', views.nicknamechange, name='nickname_change'),
     path('pw_change', views.pwchange, name='pwchange'),
     path('profile_pic_change', views.profile_pic_change, name='profile_pic_change'),
-    path('inactive', views.inactive, name='inactive')
+    path('inactive', views.inactive, name='inactive'),
+
+    path('refresh_jwt', views.refresh_jwt, name='refresh_jwt'),
+    path('remove_jwt', views.remove_jwt, name='remove_jwt')
 ]
