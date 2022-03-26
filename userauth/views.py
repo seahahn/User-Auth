@@ -1,13 +1,13 @@
-from django.contrib.auth.models import User
-from django.contrib import auth
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.core.mail import EmailMessage
 from base import settings
 from .models import inactive_users, users, mail_confirm
-import bcrypt, string, random, boto3, json
+from datetime import datetime, timezone, timedelta
+import bcrypt, string, random, boto3, json, jwt
 
-
+SECRET_KEY = settings.SECRET_KEY
+JWT_ISS = settings.JWT_ISS
 
 # JSON으로 들어오는 데이터를 파싱하기 위한 데코레이터
 def requestBodyToJson(original):
@@ -16,15 +16,96 @@ def requestBodyToJson(original):
 
     return wrapper
 
+
+# 사용자 인증이 필요한 기능에 JWT 토큰 인증 과정을 붙이기 위한 데코레이터
+def verify_token(original):
+    def wrapper(request):
+        try:
+            # 토큰을 검증하여 유효한 토큰인지 확인
+            rt = request.COOKIES.get("refresh_token")
+            at = request.COOKIES.get("access_token")
+            jwt.decode(rt, SECRET_KEY, issuer=JWT_ISS, algorithms="HS256") # refresh_token이 유효하지 않으면 에러 발생
+            jwt.decode(at, SECRET_KEY, algorithms="HS256")
+            return original(request)
+        except Exception as e:
+            return JsonResponse({"result":False, "token_state":False, "message": str(e)})
+
+    return wrapper
+
+
 # 비밀번호 해싱 기능
 def hashingPw(pw):
     hash = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
     return hash.decode('utf-8') # DB에 byte string 저장이 불가능하므로 decode함
 
+
+# JWT 토큰 생성하기 위한 함수(login에서 사용)
+def create_jwt(token_data):
+    at_data = token_data
+    at_data['exp'] = datetime.now(tz=timezone.utc) + timedelta(hours=1)
+
+    # refresh_token에는 iss까지 포함해서 반환
+    rt_data = token_data
+    rt_data['exp'] = datetime.now(tz=timezone.utc) + timedelta(days=1)
+    rt_data['iss'] = settings.JWT_ISS
+
+    access_token = jwt.encode(at_data, SECRET_KEY, algorithm='HS256')
+    refresh_token = jwt.encode(rt_data, SECRET_KEY, algorithm='HS256')
+
+    return access_token, refresh_token
+
+
+# 사용자 접속 중 JWT 토큰 갱신하기 위한 함수
+def refresh_jwt(request):
+    # 토큰을 검증하여 유효한 토큰인지 확인
+    rt = request.COOKIES.get("refresh_token")
+    at = request.COOKIES.get("access_token")
+    try:
+        jwt.decode(rt, SECRET_KEY, issuer=JWT_ISS, algorithms="HS256") # refresh_token이 유효하지 않으면 에러 발생
+        jwt.decode(at, SECRET_KEY, algorithms="HS256")
+    except Exception as e:
+        return JsonResponse({"result":False, "token_state":False, "message":"비정상적 갱신 요청"})
+
+    response = JsonResponse({"result":True})
+
+    # 토큰을 갱신하기 위해 새로운 토큰을 발급
+    at_data = jwt.decode(at, SECRET_KEY, algorithms="HS256")
+    at_data['exp'] = datetime.now(tz=timezone.utc) + timedelta(hours=1)
+    access_token = jwt.encode(at_data, SECRET_KEY, algorithm='HS256')
+
+    # refresh_token의 유효 기간 확인 후 만료 1시간 전이면 갱신하기
+    rt_data = jwt.decode(rt, SECRET_KEY, algorithms="HS256")
+    if datetime.fromtimestamp(rt_data['exp'], tz=timezone.utc) < datetime.now(tz=timezone.utc) + timedelta(hours=1):
+        rt_data['exp'] = datetime.now(tz=timezone.utc) + timedelta(days=1)
+        refresh_token = jwt.encode(rt_data, SECRET_KEY, algorithm='HS256')
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+
+    response.set_cookie(key="access_token", value=access_token, httponly=True)
+    return response
+
+
+# 사용자 로그아웃 시 토큰 삭제하기 위한 함수
+def remove_jwt(_):
+    # 토큰을 검증하여 유효한 토큰인지 확인
+    # rt = request.COOKIES.get("refresh_token")
+    # at = request.COOKIES.get("access_token")
+    # try:
+    #     jwt.decode(rt, SECRET_KEY, algorithms="HS256") # refresh_token이 유효하지 않으면 에러 발생
+    #     jwt.decode(at, SECRET_KEY, algorithms="HS256")
+    # except Exception as e:
+    #     return JsonResponse({"result":False, "token_state":False})
+
+    response = JsonResponse({"result":True})
+    response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
+    return response
+
+
 # 웹 앱 접속 시 CSRF Token 발급 위한 함수
 def index(request):
     csrf_token = get_token(request)
     return JsonResponse({"result":True, "csrf_token":csrf_token})
+
 
 def nickname_check(request):
     try:
@@ -37,6 +118,7 @@ def nickname_check(request):
 
     #해당되는 유저가 있음으로 해당 닉네임으로 가입 불가능
     return JsonResponse({"result":False})
+
 
 @requestBodyToJson
 def email_check(data):
@@ -73,6 +155,7 @@ def email_check(data):
     #해당되는 이메일이 존재하여 해당 이메일로 신규가입 불가능
     return JsonResponse({"result":False})
 
+
 @requestBodyToJson
 def email_confirm(data):
     try:
@@ -82,9 +165,9 @@ def email_confirm(data):
     except Exception as e:
         return JsonResponse({"result":False})
 
+
 @requestBodyToJson
 def signup(data):
-    print(data)
     #입력으로 들어온 유저 정보를 이용해 데이터베이스 유저 테이블에 정보를 삽입, 성공메시지 반환
     try:
         users(
@@ -97,29 +180,42 @@ def signup(data):
         print(e)
         return JsonResponse({"result":False})
 
+
 @requestBodyToJson
 def login(data):
     #해당 유저를 데이터베이스에서 조회
     try:
         user = users.objects.get(email = data['email'])
     except Exception as e:
-        print(e)
         # 가입하지 않은 이메일인 경우
         return JsonResponse({"result":False, "email_state":False})
 
     #비밀번호 일치 여부 확인
-    print(data['pw'].encode('utf-8'))
-    print(user.pw)
     if bcrypt.checkpw(data['pw'].encode('utf-8'), user.pw.encode('utf-8')):
+        # 닉네임과 프로필 사진 URL만 포함
         user_data = {
             "idx":user.idx,
             "email":user.email,
+            "membership":user.membership,
             "nickname":user.nickname,
-            "profile_pic":user.profile_pic,
+            "profile_pic":user.profile_pic
         }
-        return JsonResponse({"result":True, "email_state":True, "user_data":user_data})
+
+        token_data = {
+            "idx":user.idx,
+            "email":user.email,
+            "membership":user.membership,
+        }
+        # idx, email, membership은 JWT에 담아서 반환
+        access_token, refresh_token = create_jwt(token_data)
+
+        response = JsonResponse({"result":True, "email_state":True, "user_data":user_data})
+        response.set_cookie(key="access_token", value=access_token, httponly=True)
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+        return response
     else:
         return JsonResponse({"result":False, "email_state":True})
+
 
 @requestBodyToJson
 def search_pw(data):
@@ -150,6 +246,7 @@ def search_pw(data):
     return JsonResponse({"result":True})
 
 
+@verify_token
 @requestBodyToJson
 def nicknamechange(data):
     #해당 유저를 데이터베이스에서 조회
@@ -165,6 +262,7 @@ def nicknamechange(data):
     return JsonResponse({"result":True, "user_state":True})
 
 
+@verify_token
 @requestBodyToJson
 def pwchange(data):
     #해당 유저를 데이터베이스에서 조회
@@ -182,7 +280,14 @@ def pwchange(data):
         return JsonResponse({"result":False, "user_state":True})
 
 
+@verify_token
 def profile_pic_change(request):
+    #해당 유저를 데이터베이스에서 조회
+    try:
+        user = users.objects.get(idx = request.POST['idx'])
+    except:
+        return JsonResponse({"result":False, "user_state":False})
+
     s3_client = boto3.client(
         's3',
         aws_access_key_id = settings.AWS_S3_ACCESS_KEY_ID,
@@ -191,39 +296,38 @@ def profile_pic_change(request):
     if len(request.FILES) != 0:
 
         file = request.FILES['profile_pic']
-        pic_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.ap-northeast-2.amazonaws.com/profile_pic/{request.POST['user_idx']}/{request.POST['user_idx']}.png"
+        pic_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.ap-northeast-2.amazonaws.com/profile_pic/{request.POST['idx']}/{request.POST['idx']}.png"
 
         s3_client.upload_fileobj(
             file,
             settings.AWS_STORAGE_BUCKET_NAME,
-            f"profile_pic/{request.POST['user_idx']}/{request.POST['user_idx']}.png",
+            f"profile_pic/{request.POST['idx']}/{request.POST['idx']}.png",
             ExtraArgs={
                 "ContentType": file.content_type,
             }
         )
 
-        user = users.objects.get(idx = request.POST['user_idx'])
         user.profile_pic = pic_url
         user.save()
 
         return JsonResponse({"result":True, "profile_pic":pic_url})
     else:
-        s3_client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=f"profile_pic/{request.POST['user_idx']}/{request.POST['user_idx']}.png")
+        s3_client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=f"profile_pic/{request.POST['idx']}/{request.POST['idx']}.png")
 
-        user = users.objects.get(idx = request.POST['user_idx'])
+        user = users.objects.get(idx = request.POST['idx'])
         user.profile_pic = ''
         user.save()
 
         return JsonResponse({"result":True, "profile_pic":None})
 
 
+@verify_token
 @requestBodyToJson
 def inactive(data):
     #해당 유저를 데이터베이스에서 조회
     try:
         user = users.objects.get(idx = data['idx'])
     except Exception as e:
-        print(e)
         return JsonResponse({"result":False, "user_state":False})
 
     if bcrypt.checkpw(data['pw'].encode('utf-8'), user.pw.encode('utf-8')):

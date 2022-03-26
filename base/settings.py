@@ -11,8 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
-import os, json
-import django_heroku
+import os, json, environ, django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,16 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-secret_file = os.path.join(BASE_DIR, 'secrets.json')
-with open(secret_file) as f:
-    secrets = json.loads(f.read())
+env = environ.Env()
+environ.Env.read_env(
+    env_file=os.path.join(BASE_DIR, '.env')
+)
 
-SECRET_KEY = secrets["SECRET_KEY"]
+SECRET_KEY = env('SECRET_KEY')
+JWT_ISS = env('JWT_ISS')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com', 'front-web-xi.vercel.app']
 
 APPEND_SLASH=False
 
@@ -89,11 +90,11 @@ WSGI_APPLICATION = 'base.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': secrets['DB_NAME'],
-        'USER' : secrets['DB_USERNAME'],
-        'PASSWORD' : secrets['DB_PASSWORD'],
-        'HOST' : secrets['DB_HOST'],
-        'PORT' : secrets['DB_PORT'],
+        'NAME': env('DB_NAME'),
+        'USER' : env('DB_USERNAME'),
+        'PASSWORD' : env('DB_PASSWORD'),
+        'HOST' : env('DB_HOST'),
+        'PORT' : env('DB_PORT'),
     }
 }
 
@@ -142,30 +143,35 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = secrets['EMAIL_HOST']
-EMAIL_HOST_USER = secrets['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = secrets['EMAIL_HOST_PASSWORD']
-EMAIL_PORT = int(secrets['EMAIL_PORT'])
-EMAIL_USE_TLS = (secrets['EMAIL_USE_TLS'] == "True")
-DEFAULT_FROM_EMAIL = secrets['EMAIL_HOST_USER']
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = int(env('EMAIL_PORT'))
+EMAIL_USE_TLS = (env('EMAIL_USE_TLS') == "True")
+DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER')
 
 
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_S3_SECURE_URLS = secrets['AWS_S3_SECURE_URLS']
-AWS_QUERYSTRING_AUTH = secrets['AWS_QUERYSTRING_AUTH']
+AWS_S3_SECURE_URLS = env('AWS_S3_SECURE_URLS')
+AWS_QUERYSTRING_AUTH = env('AWS_QUERYSTRING_AUTH')
 
-AWS_S3_ACCESS_KEY_ID = secrets['AWS_S3_ACCESS_KEY_ID']
-AWS_S3_SECRET_ACCESS_KEY = secrets['AWS_S3_SECRET_ACCESS_KEY']
-AWS_STORAGE_BUCKET_NAME = secrets['AWS_STORAGE_BUCKET_NAME']
+AWS_S3_ACCESS_KEY_ID = env('AWS_S3_ACCESS_KEY_ID')
+AWS_S3_SECRET_ACCESS_KEY = env('AWS_S3_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
 	# 허용할 Origin 추가 (프론트앤드)
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
+    "https://front-web-xi.vercel.app"
 ]
-# CSRF_TRUSTED_ORIGINS = ["*"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://front-web-xi.vercel.app"
+]
 CORS_ALLOW_HEADERS = (
     'access-control-allow-credentials',
     'access-control-allow-origin',
