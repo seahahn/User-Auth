@@ -32,7 +32,7 @@ JWT_ISS = env('JWT_ISS')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com', 'front-web-xi.vercel.app']
 
 APPEND_SLASH=False
 
@@ -164,11 +164,13 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
 	# 허용할 Origin 추가 (프론트앤드)
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
+    "https://front-web-xi.vercel.app"
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
+    "https://front-web-xi.vercel.app"
 ]
 CORS_ALLOW_HEADERS = (
     'access-control-allow-credentials',
