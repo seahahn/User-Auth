@@ -17,7 +17,7 @@ class users(models.Model):
 
 
 class func_log(models.Model):
-    user_idx = models.ForeignKey(users, db_column="user_idx", on_delete=models.DO_NOTHING)
+    user_idx = models.IntegerField()
     func_code = models.CharField(max_length=255)
     is_worked = models.IntegerField(default= 0)
     error_msg = models.TextField(default="")
@@ -30,7 +30,7 @@ class func_log(models.Model):
 
 class ml_project(models.Model):
     idx = models.AutoField(primary_key=True, db_column="idx")
-    user_idx = models.ForeignKey(users, db_column="user_idx", on_delete=models.DO_NOTHING)
+    user_idx = models.ForeignKey(users, db_column="user_idx", on_delete=models.CASCADE)
     proj_name = models.CharField(max_length=255)
     last_update = models.DateTimeField('last update', auto_now_add=True)
     created_at = models.DateTimeField('create time', auto_now_add=True)
@@ -40,7 +40,7 @@ class ml_project(models.Model):
 
 class ml_model(models.Model):
     idx = models.AutoField(primary_key=True, db_column="idx")
-    user_idx = models.ForeignKey(users, db_column="user_idx", on_delete=models.DO_NOTHING)
+    user_idx = models.ForeignKey(users, db_column="user_idx", on_delete=models.CASCADE)
     model_name = models.CharField(max_length=255)
     model_url = models.CharField(max_length=255, default="")
     last_update = models.DateTimeField('last update', auto_now_add=True)

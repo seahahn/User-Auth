@@ -28,7 +28,7 @@ def verify_token(original):
             jwt.decode(at, SECRET_KEY, algorithms="HS256")
             return original(request)
         except Exception as e:
-            return JsonResponse({"result":False, "token_state":False})
+            return JsonResponse({"result":False, "token_state":False, "message": str(e)})
 
     return wrapper
 
