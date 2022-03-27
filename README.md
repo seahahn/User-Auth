@@ -36,5 +36,9 @@ python manage.py migrate
 
 ```
 python manage.py runserver
-python manage.py runserver 8002 # 포트 번호 변경할 경우
 ```
+
+## 배포 플랫폼 및 서버 주소
+
+- 플랫폼 : Heroku
+- 주소 : [https://ai-play-user-auth.herokuapp.com](https://ai-play-user-auth.herokuapp.com)

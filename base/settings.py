@@ -30,9 +30,9 @@ SECRET_KEY = env('SECRET_KEY')
 JWT_ISS = env('JWT_ISS')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com', 'front-web-xi.vercel.app']
+ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com', '.vercel.app']
 
 APPEND_SLASH=False
 
