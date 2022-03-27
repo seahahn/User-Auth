@@ -5,6 +5,8 @@ from base import settings
 from .models import inactive_users, users, mail_confirm
 from datetime import datetime, timezone, timedelta
 import bcrypt, string, random, boto3, json, jwt
+from django.views.decorators.csrf import csrf_exempt
+
 
 SECRET_KEY = settings.SECRET_KEY
 JWT_ISS = settings.JWT_ISS
@@ -78,9 +80,9 @@ def refresh_jwt(request):
     if datetime.fromtimestamp(rt_data['exp'], tz=timezone.utc) < datetime.now(tz=timezone.utc) + timedelta(hours=1):
         rt_data['exp'] = datetime.now(tz=timezone.utc) + timedelta(days=1)
         refresh_token = jwt.encode(rt_data, SECRET_KEY, algorithm='HS256')
-        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, samesite="None", secure=True)
 
-    response.set_cookie(key="access_token", value=access_token, httponly=True)
+    response.set_cookie(key="access_token", value=access_token, httponly=True, samesite="None", secure=True)
     return response
 
 
@@ -105,6 +107,12 @@ def remove_jwt(_):
 def index(request):
     csrf_token = get_token(request)
     return JsonResponse({"result":True, "csrf_token":csrf_token})
+# def index(request):
+#     csrf_token = get_token(request)
+#     response = JsonResponse({"result":True, "csrf_token":csrf_token})
+#     response.set_cookie(key="csrftoken", value=csrf_token)
+#     return response
+
 
 
 def nickname_check(request):
@@ -120,6 +128,7 @@ def nickname_check(request):
     return JsonResponse({"result":False})
 
 
+@csrf_exempt
 @requestBodyToJson
 def email_check(data):
     print(data)
@@ -156,6 +165,7 @@ def email_check(data):
     return JsonResponse({"result":False})
 
 
+@csrf_exempt
 @requestBodyToJson
 def email_confirm(data):
     try:
@@ -166,6 +176,7 @@ def email_confirm(data):
         return JsonResponse({"result":False})
 
 
+@csrf_exempt
 @requestBodyToJson
 def signup(data):
     #입력으로 들어온 유저 정보를 이용해 데이터베이스 유저 테이블에 정보를 삽입, 성공메시지 반환
@@ -181,6 +192,7 @@ def signup(data):
         return JsonResponse({"result":False})
 
 
+@csrf_exempt
 @requestBodyToJson
 def login(data):
     #해당 유저를 데이터베이스에서 조회
@@ -210,13 +222,14 @@ def login(data):
         access_token, refresh_token = create_jwt(token_data)
 
         response = JsonResponse({"result":True, "email_state":True, "user_data":user_data})
-        response.set_cookie(key="access_token", value=access_token, httponly=True)
-        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+        response.set_cookie(key="access_token", value=access_token, httponly=True, samesite="None", secure=True)
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, samesite="None", secure=True)
         return response
     else:
         return JsonResponse({"result":False, "email_state":True})
 
 
+@csrf_exempt
 @requestBodyToJson
 def search_pw(data):
     try:
@@ -246,6 +259,7 @@ def search_pw(data):
     return JsonResponse({"result":True})
 
 
+@csrf_exempt
 @verify_token
 @requestBodyToJson
 def nicknamechange(data):
@@ -262,6 +276,7 @@ def nicknamechange(data):
     return JsonResponse({"result":True, "user_state":True})
 
 
+@csrf_exempt
 @verify_token
 @requestBodyToJson
 def pwchange(data):
@@ -280,6 +295,7 @@ def pwchange(data):
         return JsonResponse({"result":False, "user_state":True})
 
 
+@csrf_exempt
 @verify_token
 def profile_pic_change(request):
     #해당 유저를 데이터베이스에서 조회
@@ -321,6 +337,7 @@ def profile_pic_change(request):
         return JsonResponse({"result":True, "profile_pic":None})
 
 
+@csrf_exempt
 @verify_token
 @requestBodyToJson
 def inactive(data):
