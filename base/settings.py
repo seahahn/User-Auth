@@ -193,7 +193,8 @@ CORS_ALLOW_HEADERS = (
     'X-CSRFToken',
     'csrftoken',
     'x-requested-with',
-    'User-Id'
+    'User-Id',
+    'token'
 )
 
 # Activate Django-Heroku.
