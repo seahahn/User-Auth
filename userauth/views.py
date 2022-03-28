@@ -140,6 +140,7 @@ def email_check(data):
             mail_confirm(
                     email = data["email"],
                     cert_number = certification_number).save()
+            print("mail_confirm")
         print("check")
         email = EmailMessage(
             '회원 가입 인증번호',        # 제목
