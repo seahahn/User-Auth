@@ -171,7 +171,8 @@ CORS_ALLOWED_ORIGIN_REGEXES= [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://front-web-xi.vercel.app"
+    "https://front-web-xi.vercel.app",
+    "https://*.aiplay.online"
 ]
 CORS_ALLOW_HEADERS = (
     'access-control-allow-credentials',
