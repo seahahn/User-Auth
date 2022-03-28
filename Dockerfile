@@ -14,18 +14,14 @@ COPY . /app
 # WORKDIR: 작업 디렉토리 변경. 셸 cd /app 과 같은 기능 
 WORKDIR /app
 
-# # RUN: 명령어 실행. 복사된 requirements.txt 파일로 pip로 필요 라이브러리 설치 
-# # alembic으로 DB 마이그레이션 진행
+# RUN: 명령어 실행. 복사된 requirements.txt 파일로 pip로 필요 라이브러리 설치 
 RUN pip install -r requirements.txt
 
 # # EXPOSE: 컨테이너 실행 시 노출될 포트 (App Engine default PORT=8080)
 EXPOSE 8000
 
 # # ENTRYPOINT: 컨테이너 시작 시 기본으로 실행되는 명령어 
-# ENTRYPOINT [ "gunicorn" ]
+ENTRYPOINT [ "gunicorn" ]
 
-# # CMD: 컨테이너 시작 시 실행되는 명령어로 위 ENTRYPOINT 명령어 뒤 인자로 실행하게 된다. 
-# CMD [ "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "main:app"]
-
-# CMD ["python3", "manage.py", "runserver", "0:8000"]
-CMD [ "gunicorn", "base.wsgi", "--log-file", "-" ]
+# CMD: 컨테이너 시작 시 실행되는 명령어로 위 ENTRYPOINT 명령어 뒤 인자로 실행하게 된다. 
+CMD [ "base.wsgi", "--log-file", "-" ]
