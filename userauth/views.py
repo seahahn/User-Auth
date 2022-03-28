@@ -127,7 +127,7 @@ def email_check(data):
         certification_number = ""
         for i in range(6):
             certification_number += random.choice(string.digits)
-
+        print(certification_number)
         # 이전 인증 요청이 있는지 확인
         try:
             # 있으면 기존 인증 요청 업데이트
@@ -135,6 +135,7 @@ def email_check(data):
             prev_check.cert_number = certification_number
             prev_check.save()
         except Exception as e:
+            print(e)
             # 없으면 mail_confirm 테이블에 인증번호 저장
             mail_confirm(
                     email = data["email"],
