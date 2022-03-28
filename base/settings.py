@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
-import os, environ, django_heroku
+import os, environ, dj_database_url, django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -87,6 +87,7 @@ WSGI_APPLICATION = 'base.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -97,6 +98,9 @@ DATABASES = {
         'PORT' : env('DB_PORT'),
     }
 }
+
+db_from_env = dj_database_url.config(default=env('DB_URL') ,conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation
