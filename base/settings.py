@@ -99,7 +99,7 @@ DATABASES = {
     }
 }
 
-db_from_env = dj_database_url.config(default=env('DB_URL') ,conn_max_age=500)
+db_from_env = dj_database_url.config(default=env('DATABASE_URL') ,conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
 
