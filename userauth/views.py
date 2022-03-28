@@ -68,12 +68,13 @@ def refresh_jwt(request):
     except Exception as e:
         return JsonResponse({"result":False, "token_state":False, "message":"비정상적 갱신 요청"})
 
-    response = JsonResponse({"result":True, "token_state":True})
-
     # 토큰을 갱신하기 위해 새로운 토큰을 발급
     at_data = jwt.decode(at, SECRET_KEY, algorithms="HS256")
     at_data['exp'] = datetime.now(tz=timezone.utc) + timedelta(hours=1)
     access_token = jwt.encode(at_data, SECRET_KEY, algorithm='HS256')
+
+    response = JsonResponse({"result":True, "token_state":True, "token":access_token})
+    response.set_cookie(key="access_token", value=access_token, httponly=True, samesite="None", secure=True)
 
     # refresh_token의 유효 기간 확인 후 만료 1시간 전이면 갱신하기
     rt_data = jwt.decode(rt, SECRET_KEY, algorithms="HS256")
@@ -82,7 +83,6 @@ def refresh_jwt(request):
         refresh_token = jwt.encode(rt_data, SECRET_KEY, algorithm='HS256')
         response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, samesite="None", secure=True)
 
-    response.set_cookie(key="access_token", value=access_token, httponly=True, samesite="None", secure=True)
     return response
 
 
@@ -205,7 +205,7 @@ def login(data):
         # idx, email, membership은 JWT에 담아서 반환
         access_token, refresh_token = create_jwt(token_data)
 
-        response = JsonResponse({"result":True, "email_state":True, "user_data":user_data})
+        response = JsonResponse({"result":True, "email_state":True, "user_data":user_data, "token":access_token})
         response.set_cookie(key="access_token", value=access_token, httponly=True, samesite="None", secure=True)
         response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, samesite="None", secure=True)
         return response
