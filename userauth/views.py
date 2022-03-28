@@ -68,7 +68,7 @@ def refresh_jwt(request):
     except Exception as e:
         return JsonResponse({"result":False, "token_state":False, "message":"비정상적 갱신 요청"})
 
-    response = JsonResponse({"result":True})
+    response = JsonResponse({"result":True, "token_state":True})
 
     # 토큰을 갱신하기 위해 새로운 토큰을 발급
     at_data = jwt.decode(at, SECRET_KEY, algorithms="HS256")
@@ -88,30 +88,21 @@ def refresh_jwt(request):
 
 # 사용자 로그아웃 시 토큰 삭제하기 위한 함수
 def remove_jwt(_):
-    # 토큰을 검증하여 유효한 토큰인지 확인
-    # rt = request.COOKIES.get("refresh_token")
-    # at = request.COOKIES.get("access_token")
-    # try:
-    #     jwt.decode(rt, SECRET_KEY, algorithms="HS256") # refresh_token이 유효하지 않으면 에러 발생
-    #     jwt.decode(at, SECRET_KEY, algorithms="HS256")
-    # except Exception as e:
-    #     return JsonResponse({"result":False, "token_state":False})
-
     response = JsonResponse({"result":True})
-    response.delete_cookie("access_token")
-    response.delete_cookie("refresh_token")
+    response.delete_cookie("access_token", samesite="None", secure=True)
+    response.delete_cookie("refresh_token", samesite="None", secure=True)
     return response
 
 
 # 웹 앱 접속 시 CSRF Token 발급 위한 함수
-def index(request):
-    csrf_token = get_token(request)
-    return JsonResponse({"result":True, "csrf_token":csrf_token})
 # def index(request):
 #     csrf_token = get_token(request)
-#     response = JsonResponse({"result":True, "csrf_token":csrf_token})
-#     response.set_cookie(key="csrftoken", value=csrf_token)
-#     return response
+#     return JsonResponse({"result":True, "csrf_token":csrf_token})
+def index(request):
+    csrf_token = get_token(request)
+    response = JsonResponse({"result":True, "csrf_token":csrf_token})
+    response.set_cookie(key="csrftoken", value=csrf_token, samesite="None", secure=True)
+    return response
 
 
 
@@ -131,7 +122,6 @@ def nickname_check(request):
 @csrf_exempt
 @requestBodyToJson
 def email_check(data):
-    print(data)
     try:
         #해당 이메일을 가진 유저가 존재하는지 확인
         #에러가 발생하면 해당 이메일을 가진 유저가 없는 것으로 판단
