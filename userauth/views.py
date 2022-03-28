@@ -136,6 +136,7 @@ def email_check(data):
             prev_check.save()
         except Exception as e:
             print(e)
+            print(data["email"])
             # 없으면 mail_confirm 테이블에 인증번호 저장
             mail_confirm(
                     email = data["email"],
