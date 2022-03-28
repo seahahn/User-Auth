@@ -32,7 +32,7 @@ JWT_ISS = env('JWT_ISS')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com', '.vercel.app']
+ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com', '.vercel.app', 'aiplay.online']
 
 APPEND_SLASH=False
 
@@ -164,6 +164,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://front-web-xi.vercel.app"
+]
+CORS_ALLOWED_ORIGIN_REGEXES= [
+    r"^https://\w+\.aiplay\.online$",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
