@@ -116,11 +116,14 @@ def nickname_check(request):
 @csrf_exempt
 @requestBodyToJson
 def email_check(data):
+    print(data)
     try:
         #해당 이메일을 가진 유저가 존재하는지 확인
         #에러가 발생하면 해당 이메일을 가진 유저가 없는 것으로 판단
         result = users.objects.get(email = data['email'])
+        print(result)
     except Exception as e:
+        print(e)
         certification_number = ""
         for i in range(6):
             certification_number += random.choice(string.digits)
@@ -136,13 +139,15 @@ def email_check(data):
             mail_confirm(
                     email = data["email"],
                     cert_number = certification_number).save()
-
+        print("check")
         email = EmailMessage(
             '회원 가입 인증번호',        # 제목
             certification_number,       # 내용
             to=[data['email']],  # 받는 이메일 리스트
         )
+        print("ready")
         email.send()
+        print("send")
         return JsonResponse({"result":True})
 
     #해당되는 이메일이 존재하여 해당 이메일로 신규가입 불가능
