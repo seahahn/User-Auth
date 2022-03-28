@@ -74,14 +74,14 @@ def refresh_jwt(request):
     access_token = jwt.encode(at_data, SECRET_KEY, algorithm='HS256')
 
     response = JsonResponse({"result":True, "token_state":True, "token":access_token})
-    response.set_cookie(key="access_token", value=access_token, httponly=True, samesite="None", secure=True, domain="aiplay.online")
+    response.set_cookie(key="access_token", value=access_token, httponly=True)
 
     # refresh_token의 유효 기간 확인 후 만료 1시간 전이면 갱신하기
     rt_data = jwt.decode(rt, SECRET_KEY, algorithms="HS256")
     if datetime.fromtimestamp(rt_data['exp'], tz=timezone.utc) < datetime.now(tz=timezone.utc) + timedelta(hours=1):
         rt_data['exp'] = datetime.now(tz=timezone.utc) + timedelta(days=1)
         refresh_token = jwt.encode(rt_data, SECRET_KEY, algorithm='HS256')
-        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, samesite="None", secure=True, domain="aiplay.online")
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
 
     return response
 
@@ -89,8 +89,8 @@ def refresh_jwt(request):
 # 사용자 로그아웃 시 토큰 삭제하기 위한 함수
 def remove_jwt(_):
     response = JsonResponse({"result":True})
-    response.delete_cookie("access_token", samesite="None", domain="aiplay.online")
-    response.delete_cookie("refresh_token", samesite="None", domain="aiplay.online")
+    response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
     return response
 
 
@@ -206,8 +206,8 @@ def login(data):
         access_token, refresh_token = create_jwt(token_data)
 
         response = JsonResponse({"result":True, "email_state":True, "user_data":user_data, "token":access_token})
-        response.set_cookie(key="access_token", value=access_token, httponly=True, samesite="None", secure=True, domain="aiplay.online")
-        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, samesite="None", secure=True, domain="aiplay.online")
+        response.set_cookie(key="access_token", value=access_token, httponly=True)
+        response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
         return response
     else:
         return JsonResponse({"result":False, "email_state":True})
