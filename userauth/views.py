@@ -89,21 +89,15 @@ def refresh_jwt(request):
 # 사용자 로그아웃 시 토큰 삭제하기 위한 함수
 def remove_jwt(_):
     response = JsonResponse({"result":True})
-    response.delete_cookie("access_token", samesite="None", secure=True)
-    response.delete_cookie("refresh_token", samesite="None", secure=True)
+    response.delete_cookie("access_token", samesite="None")
+    response.delete_cookie("refresh_token", samesite="None")
     return response
 
 
 # 웹 앱 접속 시 CSRF Token 발급 위한 함수
-# def index(request):
-#     csrf_token = get_token(request)
-#     return JsonResponse({"result":True, "csrf_token":csrf_token})
 def index(request):
     csrf_token = get_token(request)
-    response = JsonResponse({"result":True, "csrf_token":csrf_token})
-    response.set_cookie(key="csrftoken", value=csrf_token, samesite="None", secure=True)
-    return response
-
+    return JsonResponse({"result":True, "csrf_token":csrf_token})
 
 
 def nickname_check(request):
