@@ -1,20 +1,68 @@
-# AI-Play User-Auth
+# ❇️ AI Play User-Auth
 
-사용자 계정 및 인증 관련 기능을 담당할 API 서버
+AI Play의 사용자 계정 및 인증 관련 기능을 담당할 API 서버
 
-## Stack
+## :one: Stack
 
-Python 3.8.12
-[DJango 4.0.2](https://www.djangoproject.com/)
+- Python 3.8.12
+- DJango 4.0.3
+- PostgreSQL(ElephantSQL)
+- AWS S3
+- JWT
+- Swagger
 
-## 준비 사항
+<br/>
+
+## :two: 배포 플랫폼 및 서버 주소
+
+- 플랫폼 : Heroku
+- 주소 : [https://ai-play-user-auth.herokuapp.com](https://ai-play-user-auth.herokuapp.com)
+
+<br/>
+
+## :three: API 명세
+
+- DOCS : https://aiplay-user-auth.herokuapp.com/userauth/swagger
+
+| Method                                   | URL (BASE_URL = /userauth) | Description                                   |
+| ---------------------------------------- | -------------------------- | --------------------------------------------- |
+| 이메일, 닉네임 체크를 위한 API           |                            |                                               |
+| POST                                     | /email_check               | 회원가입 시 이메일 인증 번호 발송을 위한 함수 |
+| POST                                     | /email_confirm             | 회원가입 시 이메일 인증 번호 체크를 위한 함수 |
+| GET                                      | /nickname_check            | 프로젝트 구조 업데이트                        |
+| 로그인, 회원가입, 사용자 탈퇴를 위한 API |                            |                                               |
+| POST                                     | /login                     | 사용자 로그인 처리를 위한 함수                |
+| POST                                     | /signup                    | 사용자 회원가입 처리를 위한 함수              |
+| POST                                     | /inactive                  | 사용자 탈퇴 처리를 위한 함수                  |
+| CSRF 토큰 및 JWT를 위한 API              |                            |                                               |
+| GET                                      | /index                     | 웹 앱 접속 시 CSRF Token 발급 위한 함수       |
+| GET                                      | /refresh_jwt               | 사용자 접속 중 JWT 토큰 갱신하기 위한 함수    |
+| GET                                      | /remove_jwt                | 사용자 로그아웃 시 토큰 삭제하기 위한 함수    |
+| 사용자 정보 변경을 위한 API              |                            |                                               |
+| POST                                     | /nickname_change           | /nickname_change                              |
+| POST                                     | /profile_pic_change        | 사용자 프로필 사진 변경을 위한 함수           |
+| POST                                     | /pw_change                 | 사용자 비밀번호 변경을 위한 함수              |
+| POST                                     | /search_pw                 | 사용자 임시 비밀번호 발급을 위한 함수         |
+
+<br/>
+
+## 4️⃣ 트러블 슈팅 기록
+
+- https://github.com/AI-Play/User-Auth/discussions
+
+<br/>
+
+## :five: 개발 환경 준비 사항
+
+<details>
+  <summary><b>준비 사항</b></summary>
 
 ```
-python -m pip install Django
-pip install psycopg2 # PostgreSQL 사용을 위한 DB API Package
+# 필요한 패키지 설치
+python -m pip install -r requirements.txt
 ```
 
-### 로컬 테스트 환경 구축
+##### 로컬 테스트 환경 구축
 
 ```
 # 1. docker postgres 이미지 준비 및 컨테이너 실행
@@ -32,13 +80,10 @@ python manage.py migrate
 # 4. Architecture Repo의 dbscript.sql 하단에 있는 'Trigger 생성하기' 부분의 스크립트를 실행
 ```
 
-## 개발 서버 실행
+##### 개발 서버 실행
 
 ```
 python manage.py runserver
 ```
 
-## 배포 플랫폼 및 서버 주소
-
-- 플랫폼 : Heroku
-- 주소 : [https://ai-play-user-auth.herokuapp.com](https://ai-play-user-auth.herokuapp.com)
+</details>

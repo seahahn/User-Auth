@@ -32,7 +32,7 @@ JWT_ISS = env('JWT_ISS')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com', '.vercel.app', 'aiplay.online']
+ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com', '.vercel.app', '.aiplay.online']
 
 APPEND_SLASH=False
 
@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'storages',
+    'rest_framework',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
