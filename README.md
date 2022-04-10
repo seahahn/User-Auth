@@ -22,27 +22,27 @@ AI Play의 사용자 계정 및 인증 관련 기능을 담당할 API 서버
 
 ## :three: API 명세
 
-- DOCS : https://aiplay-user-auth.herokuapp.com/userauth/swagger
+- DOCS : https://aiplay-user-auth.herokuapp.com/userauth/swagger/
 
-| Method                                   | URL (BASE_URL = /userauth) | Description                                   |
-| ---------------------------------------- | -------------------------- | --------------------------------------------- |
-| 이메일, 닉네임 체크를 위한 API           |                            |                                               |
-| POST                                     | /email_check               | 회원가입 시 이메일 인증 번호 발송을 위한 함수 |
-| POST                                     | /email_confirm             | 회원가입 시 이메일 인증 번호 체크를 위한 함수 |
-| GET                                      | /nickname_check            | 프로젝트 구조 업데이트                        |
-| 로그인, 회원가입, 사용자 탈퇴를 위한 API |                            |                                               |
-| POST                                     | /login                     | 사용자 로그인 처리를 위한 함수                |
-| POST                                     | /signup                    | 사용자 회원가입 처리를 위한 함수              |
-| POST                                     | /inactive                  | 사용자 탈퇴 처리를 위한 함수                  |
-| CSRF 토큰 및 JWT를 위한 API              |                            |                                               |
-| GET                                      | /index                     | 웹 앱 접속 시 CSRF Token 발급 위한 함수       |
-| GET                                      | /refresh_jwt               | 사용자 접속 중 JWT 토큰 갱신하기 위한 함수    |
-| GET                                      | /remove_jwt                | 사용자 로그아웃 시 토큰 삭제하기 위한 함수    |
-| 사용자 정보 변경을 위한 API              |                            |                                               |
-| POST                                     | /nickname_change           | /nickname_change                              |
-| POST                                     | /profile_pic_change        | 사용자 프로필 사진 변경을 위한 함수           |
-| POST                                     | /pw_change                 | 사용자 비밀번호 변경을 위한 함수              |
-| POST                                     | /search_pw                 | 사용자 임시 비밀번호 발급을 위한 함수         |
+| Method                 | URL (BASE_URL = /userauth) | Description                       |
+| ---------------------- | -------------------------- | --------------------------------- |
+| 이메일, 닉네임 체크    |                            |                                   |
+| POST                   | /email_check               | 회원가입 시 이메일 인증 번호 발송 |
+| POST                   | /email_confirm             | 회원가입 시 이메일 인증 번호 체크 |
+| GET                    | /nickname_check            | 프로젝트 구조 업데이트            |
+| 로그인, 회원가입, 탈퇴 |                            |                                   |
+| POST                   | /login                     | 사용자 로그인 처리                |
+| POST                   | /signup                    | 사용자 회원가입 처리              |
+| POST                   | /inactive                  | 사용자 탈퇴 처리                  |
+| CSRF 토큰 & JWT        |                            |                                   |
+| GET                    | /index                     | 웹 앱 접속 시 CSRF Token 발급     |
+| GET                    | /refresh_jwt               | 사용자 접속 중 JWT 토큰 갱신하기  |
+| GET                    | /remove_jwt                | 사용자 로그아웃 시 토큰 삭제하기  |
+| 사용자 정보 변경       |                            |                                   |
+| POST                   | /nickname_change           | 사용자 닉네임 변경                |
+| POST                   | /profile_pic_change        | 사용자 프로필 사진 변경           |
+| POST                   | /pw_change                 | 사용자 비밀번호 변경              |
+| POST                   | /search_pw                 | 사용자 임시 비밀번호 발급         |
 
 <br/>
 
