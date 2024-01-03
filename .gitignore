@@ -1,4 +1,7 @@
 __pycache__
 *.sqlite3
 secrets.json
-.env
+.env*
+/staticfiles/*
+/*venv
+.DS_Store
