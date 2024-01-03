@@ -18,7 +18,7 @@ django-environ==0.8.1
 django-heroku==0.3.1
 django-storages==1.12.3
 djangorestframework==3.13.1
-drf-yasg==1.20.0
+drf-yasg==1.21.7
 gunicorn==20.1.0
 h11==0.13.0
 httptools==0.4.0
