@@ -101,4 +101,37 @@ class Migration(migrations.Migration):
                 'db_table': 'ml_model',
             },
         ),
+
+        # -- ★ Trigger 생성하기
+        # -- 5분 지난 인증 메일 발송 기록은 새로운 기록 들어올 때 자동 삭제시킴
+        migrations.RunSQL('''CREATE FUNCTION delete_old_mail_confirm() RETURNS trigger
+                LANGUAGE plpgsql
+                AS $trigger_delete_old_mail_confirm$
+            BEGIN
+            DELETE FROM mail_confirm WHERE last_update < CURRENT_TIMESTAMP - INTERVAL '5 minutes';
+            RETURN NULL;
+            END;
+            $trigger_delete_old_mail_confirm$;
+            '''),
+
+        migrations.RunSQL('''CREATE TRIGGER trigger_delete_old_mail_confirm
+            AFTER INSERT ON mail_confirm
+            EXECUTE PROCEDURE delete_old_mail_confirm();'''),
+
+
+
+        # -- 인증 요청이 중복해서 들어오면 해당 데이터의 last_update를 갱신시킴
+        migrations.RunSQL('''CREATE FUNCTION update_mail_confirm() RETURNS trigger
+                LANGUAGE plpgsql
+                AS $trigger_update_mail_confirm$
+            BEGIN
+            update mail_confirm set last_update=NOW() where email = new.email;
+            RETURN NULL;
+            END;
+            $trigger_update_mail_confirm$;
+            '''),
+
+        migrations.RunSQL('''CREATE TRIGGER trigger_update_mail_confirm
+            AFTER UPDATE ON mail_confirm for each row
+            EXECUTE PROCEDURE update_mail_confirm();''')
     ]
