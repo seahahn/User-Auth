@@ -58,11 +58,22 @@ API server responsible for user accounts and authentication-related functions in
   <summary><b>Preparation</b></summary>
 
 ```
-// Install required packages
-python -m pip install -r requirements.txt
+// Create a new virtual environment
+// 1. Move to the directory which has python version we need to use
+// 2. Create a new virtual environment
+python -m venv /path/to/new/virtual/environment
+
+// 3. Activate the virtual environment
+source /path/to/new/virtual/environment/bin/activate
+
+// 4. Install required packages
+pip install -r requirements.txt
+
+# 5. Execute the command to create static files for Swagger UI -> check that files are created under the 'staticfiles' directory
+python manage.py collectstatic
 ```
 
-##### Set up local test environment
+##### Set up local environment
 
 ```
 // 1. Prepare Docker PostgreSQL image and run the container
@@ -77,7 +88,7 @@ python manage.py migrate
 
 // 3. Check if DB tables have been created
 
-// 4. Run the script at the bottom of dbscript.sql in the Architecture Repo to create triggers
+// 4. If it doesn't work, run the script at the bottom of dbscript.sql in the Architecture Repo to create triggers
 ```
 
 ##### Run the development server

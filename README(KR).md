@@ -58,8 +58,19 @@ AI Play의 사용자 계정 및 인증 관련 기능을 담당할 API 서버
   <summary><b>준비 사항</b></summary>
 
 ```
-# 필요한 패키지 설치
+# 새 가상환경 만들기
+# 1. 사용해야 할 python version이 있는 디렉토리로 이동
+# 2. 새 가상환경 생성을 위한 명령어 실행
+python -m venv /path/to/new/virtual/environment
+
+# 3. 가상환경 활성화하기
+source /path/to/new/virtual/environment/bin/activate
+
+# 4. 필요한 패키지 설치
 python -m pip install -r requirements.txt
+
+# 5. Swagger UI를 위한 static file 생성 명령어 실행 -> staticfiles 디렉토리 아래에 파일 생기는 것 확인하기
+python manage.py collectstatic
 ```
 
 ##### 로컬 테스트 환경 구축
@@ -77,7 +88,7 @@ python manage.py migrate
 
 # 3. DB Table이 생성되었는지 확인
 
-# 4. Architecture Repo의 dbscript.sql 하단에 있는 'Trigger 생성하기' 부분의 스크립트를 실행
+# 4. 위 과정이 작동하지 않을 경우, Architecture Repo의 dbscript.sql 하단에 있는 'Trigger 생성하기' 부분의 스크립트를 실행
 ```
 
 ##### 개발 서버 실행
