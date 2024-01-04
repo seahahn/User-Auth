@@ -2,6 +2,6 @@ __pycache__
 *.sqlite3
 secrets.json
 .env*
-/staticfiles/*
+# /staticfiles/*
 /*venv
 .DS_Store
