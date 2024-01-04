@@ -55,7 +55,7 @@ API server responsible for user accounts and authentication-related functions in
 ## :five: Development Environment Preparation
 
 <details>
-  <summary><b>Preparation</b></summary>
+  <summary><b>Expand</b></summary>
 
 ```
 // Create a new virtual environment

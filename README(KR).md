@@ -55,7 +55,7 @@ AI Play의 사용자 계정 및 인증 관련 기능을 담당할 API 서버
 ## :five: 개발 환경 준비 사항
 
 <details>
-  <summary><b>준비 사항</b></summary>
+  <summary><b>펼쳐보기</b></summary>
 
 ```
 # 새 가상환경 만들기
@@ -67,7 +67,7 @@ python -m venv /path/to/new/virtual/environment
 source /path/to/new/virtual/environment/bin/activate
 
 # 4. 필요한 패키지 설치
-python -m pip install -r requirements.txt
+pip install -r requirements.txt
 
 # 5. Swagger UI를 위한 static file 생성 명령어 실행 -> staticfiles 디렉토리 아래에 파일 생기는 것 확인하기
 python manage.py collectstatic
