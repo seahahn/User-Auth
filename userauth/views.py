@@ -145,8 +145,8 @@ def refresh_jwt(request):
 @api_view(['GET'])
 def remove_jwt(_):
     response = JsonResponse({"result":True})
-    response.delete_cookie("access_token", samesite="None", secure=True)
-    response.delete_cookie("refresh_token", samesite="None", secure=True)
+    response.delete_cookie("access_token", samesite="None")
+    response.delete_cookie("refresh_token", samesite="None")
     return response
 
 
