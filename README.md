@@ -16,13 +16,13 @@ API server responsible for user accounts and authentication-related functions in
 ## :two: Deployment Platform and Server Address
 
 - Platform: Heroku
-- Address: [https://ai-play-user-auth.herokuapp.com](https://ai-play-user-auth.herokuapp.com)
+- Address: [https://ai-play-user-auth-8ef10bdb0787.herokuapp.com/](https://ai-play-user-auth-8ef10bdb0787.herokuapp.com/)
 
 <br/>
 
 ## :three: API Specification
 
-- DOCS: [https://aiplay-user-auth.herokuapp.com/userauth/swagger/](https://aiplay-user-auth.herokuapp.com/userauth/swagger/)
+- DOCS: [https://ai-play-user-auth-8ef10bdb0787.herokuapp.com//userauth/swagger/](https://ai-play-user-auth-8ef10bdb0787.herokuapp.com//userauth/swagger/)
 
 | Method                     | URL (BASE_URL = /userauth) | Description                                    |
 | -------------------------- | -------------------------- | ---------------------------------------------- |

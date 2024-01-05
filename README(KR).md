@@ -16,13 +16,13 @@ AI Play의 사용자 계정 및 인증 관련 기능을 담당할 API 서버
 ## :two: 배포 플랫폼 및 서버 주소
 
 - 플랫폼 : Heroku
-- 주소 : [https://ai-play-user-auth.herokuapp.com](https://ai-play-user-auth.herokuapp.com)
+- 주소 : [https://ai-play-user-auth-8ef10bdb0787.herokuapp.com/](https://ai-play-user-auth-8ef10bdb0787.herokuapp.com/)
 
 <br/>
 
 ## :three: API 명세
 
-- DOCS : https://aiplay-user-auth.herokuapp.com/userauth/swagger/
+- DOCS : [https://ai-play-user-auth-8ef10bdb0787.herokuapp.com/userauth/swagger/](https://ai-play-user-auth-8ef10bdb0787.herokuapp.com/userauth/swagger/)
 
 | Method                 | URL (BASE_URL = /userauth) | Description                       |
 | ---------------------- | -------------------------- | --------------------------------- |
